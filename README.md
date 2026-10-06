@@ -4,9 +4,11 @@ A small native CLI that turns a supported literal Hurl request file into reviewa
 
 This is a source-only Rust/Linux project. It requires a build toolchain and libxml2; it is **not a single-file browser app**. After it is built, converting files works offline. There is no execution command, HTTP client, URL import, server, account, automatic configuration discovery or persistent storage in the product.
 
-**Native feasibility is not established yet.** The first public source snapshot exists to run the real parser and wire-capture gate described below. It has not yet compiled or passed native parity in this workspace. Do not treat a source review as a working-release claim.
+**Native wire parity is not established yet.** The official-AST exporter has compiled on Ubuntu22.04, and26 of27 original Rust tests passed. The remaining test fixture treated an unescaped `#` as a URL fragment, although official Hurl syntax treats it as a comment. The corrected escaped-fragment case and new valid-comment case still need a successful retry. Do not treat compilation or source review as a working-release claim.
 
 [The first CI run](https://github.com/Masanori-Spec/request-slip/actions/runs/37545545297) stopped before compilation at the license guard: ryu1.0.23 declares `Apache-2.0 OR BSL-1.0`, and Boost Software License1.0 was absent from the reviewed identifiers. Its [exact upstream license](https://github.com/dtolnay/ryu/blob/f0b52bb194befe6fd242154f2182fafd43a819b8/LICENSE-BOOST) is now checked by hash. The corrected guard also saves resolved lock/provenance metadata before reporting an unreviewed license. A successful retry is still required; no native assertions were weakened.
+
+[The second run](https://github.com/Masanori-Spec/request-slip/actions/runs/37546782829) verified all45 core source files,43 dependency license/checksum records and official executable hashes, compiled the product, then stopped at that incorrect URL test. Its exact resolved Cargo lock is now included. The product conversion logic and fixed wire oracle are unchanged by the test correction.
 
 ## Why this small tool
 
@@ -22,7 +24,7 @@ The first supported build target is Ubuntu22.04 x86_64 with Rust1.98.1, a C link
 
 ```sh
 # With the documented toolchain and system dependencies already installed:
-cargo +1.98.1 build --release
+cargo +1.98.1 build --locked --release
 ./target/release/request-slip --help
 ./target/release/request-slip requests.hurl --select 1,3 --format json > review.argv.json
 ./target/release/request-slip requests.hurl --select 1,3 --format text > requests.curl.txt
@@ -57,7 +59,7 @@ The fixture has eight original Hurl requests and seven selected exports: existin
 
 The actual CLI's JSON/text stdout is saved to files and re-read. The official Hurl executable runs the original fixed fixture; system cURL runs only the checked product argv. Captured method, raw request target, selected duplicate/empty/default header pairs and exact UTF-8 body bytes must match independently authored literal expectations **and** each other. Four actual-request mutations change method, query ordering, one duplicate header and one body byte; each must fail the fixed oracle.
 
-Official Hurl/hurlfmt8.0.1 asset SHA-256 is `cac7c4670d69444db120edb21fe06c97ba8c80dcc52279957c8dd18f05fb0c06`. The core release commit is `a39c7c43457ba2aa8edad833f33f9afe28444838`; all44 core Rust source files are checked against official Git blob IDs. CI records the resolved Cargo lock, dependency license/checksum records, compiler, system libxml2 and cURL versions. The first feasibility run resolves the lock; a verified release must retain and repeat with that exact lock.
+Official Hurl/hurlfmt8.0.1 asset SHA-256 is `cac7c4670d69444db120edb21fe06c97ba8c80dcc52279957c8dd18f05fb0c06`. The core release commit is `a39c7c43457ba2aa8edad833f33f9afe28444838`; all44 core Rust files and one CSS resource are checked against official Git blob IDs. CI records the resolved Cargo lock, dependency license/checksum records, compiler, system libxml2 and cURL versions. The included lock is the actual43-dependency graph from the compiled second run; CI and the documented build use it with `--locked`.
 
 The product imports only `hurl_core::parser`/AST/types, never core file-input helpers or Hurl runner/client APIs. Read-only source inspection found file I/O in the separate core input module and native XML parsing in the excluded branch. The CLI reads only its explicit file/stdin. Unsupported/invalid input produces an error without source excerpts or partial stdout.
 
@@ -67,4 +69,4 @@ CI uploads verification metadata and synthetic exported text/JSON only. It exclu
 
 Hurlファイルの対応範囲に含まれるリクエストを選び、実行せずにcURLコマンドのテキストと確認用JSONへ変換する小さなCLIです。ブラウザーアプリではなく、Rustとlibxml2を使ったビルドが必要です。ビルド後の変換はオフラインで行えます。
 
-認証・Cookie・変数・外部ファイル・JSON/XML本文などは対応外として出力を止めます。Hurlの既存`--curl`は実際に送ったリクエストの出力機能で、本ツールはその置き換えではありません。出力を自分で実行すると通信や課金・更新処理が発生する可能性があるため、内容を確認してください。現在は初回のネイティブ検証前で、動作確認済みの完成版とはしていません。
+認証・Cookie・変数・外部ファイル・JSON/XML本文などは対応外として出力を止めます。Hurlの既存`--curl`は実際に送ったリクエストの出力機能で、本ツールはその置き換えではありません。出力を自分で実行すると通信や課金・更新処理が発生する可能性があるため、内容を確認してください。現在はコンパイルが通り、テストの誤ったURL例を修正した段階です。実通信の内容比較は未実行で、完成版とはしていません。
