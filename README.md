@@ -4,11 +4,13 @@ A small native CLI that turns a supported literal Hurl request file into reviewa
 
 This is a source-only Rust/Linux project. It requires a build toolchain and libxml2; it is **not a single-file browser app**. After it is built, converting files works offline. There is no execution command, HTTP client, URL import, server, account, automatic configuration discovery or persistent storage in the product.
 
-**Native wire parity is not established yet.** The official-AST exporter has compiled on Ubuntu22.04, and26 of27 original Rust tests passed. The remaining test fixture treated an unescaped `#` as a URL fragment, although official Hurl syntax treats it as a comment. The corrected escaped-fragment case and new valid-comment case still need a successful retry. Do not treat compilation or source review as a working-release claim.
+**Native wire parity is not established yet.** The official-AST exporter has compiled on Ubuntu22.04, all28 Rust tests pass, and real JSON/text exports were produced. The wire harness then stopped before requests because it used cURL's `--silent` option with Hurl. The invocation now uses Hurl's documented `--no-output`; a successful wire-gate retry is still required. Do not treat compilation or source review as a working-release claim.
 
 [The first CI run](https://github.com/Masanori-Spec/request-slip/actions/runs/37545545297) stopped before compilation at the license guard: ryu1.0.23 declares `Apache-2.0 OR BSL-1.0`, and Boost Software License1.0 was absent from the reviewed identifiers. Its [exact upstream license](https://github.com/dtolnay/ryu/blob/f0b52bb194befe6fd242154f2182fafd43a819b8/LICENSE-BOOST) is now checked by hash. The corrected guard also saves resolved lock/provenance metadata before reporting an unreviewed license. A successful retry is still required; no native assertions were weakened.
 
 [The second run](https://github.com/Masanori-Spec/request-slip/actions/runs/37546782829) verified all45 core source files,43 dependency license/checksum records and official executable hashes, compiled the product, then stopped at that incorrect URL test. Its exact resolved Cargo lock is now included. The product conversion logic and fixed wire oracle are unchanged by the test correction.
+
+[The third run](https://github.com/Masanori-Spec/request-slip/actions/runs/37547806289) passed all28 tests after distinguishing Hurl's bare `#` comment from its escaped `\#` URL character. It saved actual selected text/JSON exports and passed their framing/selection checks, then Hurl rejected the unsupported test-only `--silent` switch. The corrected `--no-output` option is defined in the pinned official CLI; production code, expected wire values and destination restrictions remain unchanged.
 
 ## Why this small tool
 
@@ -69,4 +71,4 @@ CI uploads verification metadata and synthetic exported text/JSON only. It exclu
 
 Hurlファイルの対応範囲に含まれるリクエストを選び、実行せずにcURLコマンドのテキストと確認用JSONへ変換する小さなCLIです。ブラウザーアプリではなく、Rustとlibxml2を使ったビルドが必要です。ビルド後の変換はオフラインで行えます。
 
-認証・Cookie・変数・外部ファイル・JSON/XML本文などは対応外として出力を止めます。Hurlの既存`--curl`は実際に送ったリクエストの出力機能で、本ツールはその置き換えではありません。出力を自分で実行すると通信や課金・更新処理が発生する可能性があるため、内容を確認してください。現在はコンパイルが通り、テストの誤ったURL例を修正した段階です。実通信の内容比較は未実行で、完成版とはしていません。
+認証・Cookie・変数・外部ファイル・JSON/XML本文などは対応外として出力を止めます。Hurlの既存`--curl`は実際に送ったリクエストの出力機能で、本ツールはその置き換えではありません。出力を自分で実行すると通信や課金・更新処理が発生する可能性があるため、内容を確認してください。現在はコンパイルと28件のテストが通り、実際の出力も生成できています。検証スクリプトのHurl起動引数を修正した段階で、実通信の内容比較は未完了です。

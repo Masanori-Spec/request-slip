@@ -129,7 +129,7 @@ with tempfile.TemporaryDirectory(prefix='request-slip-gate-') as temp:
         assert cursor==len(actual_text)
 
         # Only this verified, fixed fixture may reach Hurl. No imported/user input is executed.
-        hurl_run=subprocess.run([str(HURL),'--silent','--max-time','5',str(fixture_path)],env=environment,stdout=subprocess.PIPE,stderr=subprocess.PIPE,timeout=30)
+        hurl_run=subprocess.run([str(HURL),'--no-output','--max-time','5',str(fixture_path)],env=environment,stdout=subprocess.PIPE,stderr=subprocess.PIPE,timeout=30)
         (EVIDENCE/'hurl-fixture.stderr.txt').write_bytes(hurl_run.stderr)
         assert hurl_run.returncode == 0, hurl_run.stderr.decode(errors='replace')
         original = [captured.get(timeout=5) for _ in range(8)]
