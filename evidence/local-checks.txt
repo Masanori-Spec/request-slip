@@ -1,0 +1,5 @@
+Python source syntax: passed (2 scripts)
+Fixed synthetic fixture SHA256: 41c9643200c3567f40507ad2531cd8c90a0058d33a69aca3c0dd338e38fb9bad
+Official source pins: 44 Rust files plus1 CSS file
+Rust test declarations: 27 (not executed here)
+Rust compilation/native wire parity: UNRUN, pending reviewed hosted CI

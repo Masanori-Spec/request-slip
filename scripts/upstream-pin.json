@@ -1,0 +1,237 @@
+{
+  "version": "8.0.1",
+  "commit": "a39c7c43457ba2aa8edad833f33f9afe28444838",
+  "crate": "hurl_core",
+  "source_files": [
+    {
+      "path": "packages/hurl_core/src/ast/core.rs",
+      "bytes": 11284,
+      "git_blob_sha": "ec923fe5b07231e756c752a0b477d110c86cec36"
+    },
+    {
+      "path": "packages/hurl_core/src/ast/json.rs",
+      "bytes": 3729,
+      "git_blob_sha": "8a5efe07c3dce1c1a246524f9b0e3f22ddeaf0f6"
+    },
+    {
+      "path": "packages/hurl_core/src/ast/mod.rs",
+      "bytes": 961,
+      "git_blob_sha": "7c93fabfc9596eda23d0b2b655575ecfe2209998"
+    },
+    {
+      "path": "packages/hurl_core/src/ast/option.rs",
+      "bytes": 11355,
+      "git_blob_sha": "87fb67d2835c99965317099da2ae7ed95ea775db"
+    },
+    {
+      "path": "packages/hurl_core/src/ast/primitive.rs",
+      "bytes": 22310,
+      "git_blob_sha": "0b3e7faa2a39cc663a9b75cf1fd971150cb8d605"
+    },
+    {
+      "path": "packages/hurl_core/src/ast/section.rs",
+      "bytes": 14490,
+      "git_blob_sha": "273758824f8c2f403fe7cf6d54736a6319b4c4ed"
+    },
+    {
+      "path": "packages/hurl_core/src/ast/visit.rs",
+      "bytes": 31155,
+      "git_blob_sha": "f44ddccd27741c3fefe31fce807c27deaa0d07c5"
+    },
+    {
+      "path": "packages/hurl_core/src/combinator.rs",
+      "bytes": 4327,
+      "git_blob_sha": "a1c48b55456437589dedbbce8b326b5ddde1c8cb"
+    },
+    {
+      "path": "packages/hurl_core/src/error/mod.rs",
+      "bytes": 13265,
+      "git_blob_sha": "abc7cea787859c2380ec7376497c033f7cc71eb0"
+    },
+    {
+      "path": "packages/hurl_core/src/format/html.rs",
+      "bytes": 13939,
+      "git_blob_sha": "27690f556d24613e178565628fd70ff6e8bc4adc"
+    },
+    {
+      "path": "packages/hurl_core/src/format/hurl.css",
+      "bytes": 1132,
+      "git_blob_sha": "3bccc7efa69cce72fc31c9106c2a0d3f99bb7b70"
+    },
+    {
+      "path": "packages/hurl_core/src/format/mod.rs",
+      "bytes": 695,
+      "git_blob_sha": "c5923d6c9d6d24aa9f8c43cc195a46d900a5df55"
+    },
+    {
+      "path": "packages/hurl_core/src/input.rs",
+      "bytes": 4903,
+      "git_blob_sha": "b63e69eecaf742f1b2fe9a32ba713b1996ba2dee"
+    },
+    {
+      "path": "packages/hurl_core/src/lib.rs",
+      "bytes": 846,
+      "git_blob_sha": "cfa6ae9829c0cccb53018e0aca32d9071dccaadc"
+    },
+    {
+      "path": "packages/hurl_core/src/parser/base64.rs",
+      "bytes": 8548,
+      "git_blob_sha": "fe6036c0f03f50069381ef28b6a008679b2a7ba9"
+    },
+    {
+      "path": "packages/hurl_core/src/parser/bytes.rs",
+      "bytes": 6315,
+      "git_blob_sha": "8cea60da72d98f3ae0f589c9a32ad4599b10c9c7"
+    },
+    {
+      "path": "packages/hurl_core/src/parser/cookiepath.rs",
+      "bytes": 8572,
+      "git_blob_sha": "5cc38eeebc44efc34ee9987beb576703a48faf05"
+    },
+    {
+      "path": "packages/hurl_core/src/parser/duration.rs",
+      "bytes": 4338,
+      "git_blob_sha": "abbf5e4722cbece98013e1d3c8e1f9802b600236"
+    },
+    {
+      "path": "packages/hurl_core/src/parser/error.rs",
+      "bytes": 14975,
+      "git_blob_sha": "f9340ce4153ea01722a17b929993eb9373b6bc76"
+    },
+    {
+      "path": "packages/hurl_core/src/parser/expr.rs",
+      "bytes": 2663,
+      "git_blob_sha": "b6c6af3e8fdd788830c8f25e728a139cf70b6f49"
+    },
+    {
+      "path": "packages/hurl_core/src/parser/filename.rs",
+      "bytes": 10525,
+      "git_blob_sha": "da6579ce6555ee07f16fb3dacd4f6b4920d25ec4"
+    },
+    {
+      "path": "packages/hurl_core/src/parser/filename_password.rs",
+      "bytes": 5950,
+      "git_blob_sha": "16287139ce8c84f8be4278493013dd634f4d7c57"
+    },
+    {
+      "path": "packages/hurl_core/src/parser/filter.rs",
+      "bytes": 11709,
+      "git_blob_sha": "cf3591de0b5c470b79ce747e4b55b138565b0e5f"
+    },
+    {
+      "path": "packages/hurl_core/src/parser/function.rs",
+      "bytes": 1729,
+      "git_blob_sha": "afd736e1c4942538e64cd27198079209c7fbb8a6"
+    },
+    {
+      "path": "packages/hurl_core/src/parser/json.rs",
+      "bytes": 34546,
+      "git_blob_sha": "66d97462b3f47a98d1bd08ef4a36f6541e732909"
+    },
+    {
+      "path": "packages/hurl_core/src/parser/key_string.rs",
+      "bytes": 9948,
+      "git_blob_sha": "0c13562f5183dbd1dd96bf128a4fb3a679d38c6d"
+    },
+    {
+      "path": "packages/hurl_core/src/parser/mod.rs",
+      "bytes": 1474,
+      "git_blob_sha": "bb5be241e15b4eb963c93aae1bbde558f913a017"
+    },
+    {
+      "path": "packages/hurl_core/src/parser/multiline.rs",
+      "bytes": 32052,
+      "git_blob_sha": "5990c413344a194d8dfc1ebbb6e9209618242c03"
+    },
+    {
+      "path": "packages/hurl_core/src/parser/number.rs",
+      "bytes": 11648,
+      "git_blob_sha": "07b2d1a704325260ab8786f43f5067f07e9ad94a"
+    },
+    {
+      "path": "packages/hurl_core/src/parser/option.rs",
+      "bytes": 26018,
+      "git_blob_sha": "6debe5f61051aa5d3c404c1d8c71e629c5d5fbd1"
+    },
+    {
+      "path": "packages/hurl_core/src/parser/parsers.rs",
+      "bytes": 21473,
+      "git_blob_sha": "40cc81fc48acaecf2f23df7c7d7fb47b4fc47011"
+    },
+    {
+      "path": "packages/hurl_core/src/parser/placeholder.rs",
+      "bytes": 3045,
+      "git_blob_sha": "752adefbb3759e644257e9f96a41e71794f3b647"
+    },
+    {
+      "path": "packages/hurl_core/src/parser/predicate.rs",
+      "bytes": 17108,
+      "git_blob_sha": "91989f14ff28c539e291556fc5498fee6af16d4c"
+    },
+    {
+      "path": "packages/hurl_core/src/parser/predicate_value.rs",
+      "bytes": 4695,
+      "git_blob_sha": "525b47abacacd7734ab363e9920f22cf6ec96e35"
+    },
+    {
+      "path": "packages/hurl_core/src/parser/primitives.rs",
+      "bytes": 35389,
+      "git_blob_sha": "d7e2e1c91db7a1a361b6ba9272f5245aa0ae6bd7"
+    },
+    {
+      "path": "packages/hurl_core/src/parser/query.rs",
+      "bytes": 16209,
+      "git_blob_sha": "f9f061ca1d78994a4b8e1641a2b30bda6d7cb4e4"
+    },
+    {
+      "path": "packages/hurl_core/src/parser/sections.rs",
+      "bytes": 36872,
+      "git_blob_sha": "65aa4a5e23e0254fa2d816401f71e613115c3fbc"
+    },
+    {
+      "path": "packages/hurl_core/src/parser/string.rs",
+      "bytes": 20090,
+      "git_blob_sha": "e5caad8ad78ae3af3d34ede3b36f00fa20d7e371"
+    },
+    {
+      "path": "packages/hurl_core/src/parser/template.rs",
+      "bytes": 11136,
+      "git_blob_sha": "81ae78f7c0d4cfc84477652f6d073fb6decd82bb"
+    },
+    {
+      "path": "packages/hurl_core/src/parser/xml.rs",
+      "bytes": 15706,
+      "git_blob_sha": "f9fce3dc24ee372325028f764f1e152144f0cde1"
+    },
+    {
+      "path": "packages/hurl_core/src/reader.rs",
+      "bytes": 10642,
+      "git_blob_sha": "eb43a08dc8c3370a0643dd43a51a003bc0bb7fb5"
+    },
+    {
+      "path": "packages/hurl_core/src/text/mod.rs",
+      "bytes": 993,
+      "git_blob_sha": "7eed466d4c515187dc9e9e2010d98a11850c8ff5"
+    },
+    {
+      "path": "packages/hurl_core/src/text/style.rs",
+      "bytes": 1901,
+      "git_blob_sha": "64c0ee2e96fcf042f118abf651e1533ea5f9426b"
+    },
+    {
+      "path": "packages/hurl_core/src/text/styledstring.rs",
+      "bytes": 14241,
+      "git_blob_sha": "b8d8490e15e1d265f4cb2cf5eda8c45608e652e6"
+    },
+    {
+      "path": "packages/hurl_core/src/types.rs",
+      "bytes": 5917,
+      "git_blob_sha": "a845771fb9ba744fe2a358c50318b299ffbd37cb"
+    }
+  ],
+  "official_linux_asset": {
+    "url": "https://github.com/Orange-OpenSource/hurl/releases/download/8.0.1/hurl-8.0.1-x86_64-unknown-linux-gnu.tar.gz",
+    "bytes": 3211204,
+    "sha256": "cac7c4670d69444db120edb21fe06c97ba8c80dcc52279957c8dd18f05fb0c06"
+  }
+}

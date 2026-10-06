@@ -1,0 +1,20 @@
+RequestSlip's original project source has no license grant. The following notices
+describe third-party dependencies, not a license for the original project.
+
+hurl_core 8.0.1
+Copyright (C) 2026 Orange
+License: Apache-2.0
+https://github.com/Orange-OpenSource/hurl/tree/a39c7c43457ba2aa8edad833f33f9afe28444838/packages/hurl_core
+
+The CLI links the unmodified official parser through Cargo. No registry source,
+native binary, system library or official Hurl executable is redistributed in
+the source archive. Building downloads dependencies under their own licenses.
+CI records the complete resolved dependency versions, registry checksums and
+SPDX license expressions in evidence/native-provenance.json and the exact lock
+in evidence/resolved-Cargo.lock. The provenance stage rejects unreviewed license
+identifiers before compiling. libxml2 is a system build/runtime dependency under
+its own upstream terms; no libxml2 copy is bundled.
+
+Official Hurl and hurlfmt 8.0.1 release executables are used only by the disposable
+synthetic test harness. Their tarball digest is pinned in scripts/upstream-pin.json.
+They are excluded from source and verification artifacts.
