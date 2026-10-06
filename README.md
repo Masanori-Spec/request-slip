@@ -6,6 +6,8 @@ This is a source-only Rust/Linux project. It requires a build toolchain and libx
 
 **Native feasibility is not established yet.** The first public source snapshot exists to run the real parser and wire-capture gate described below. It has not yet compiled or passed native parity in this workspace. Do not treat a source review as a working-release claim.
 
+[The first CI run](https://github.com/Masanori-Spec/request-slip/actions/runs/37545545297) stopped before compilation at the license guard: ryu1.0.23 declares `Apache-2.0 OR BSL-1.0`, and Boost Software License1.0 was absent from the reviewed identifiers. Its [exact upstream license](https://github.com/dtolnay/ryu/blob/f0b52bb194befe6fd242154f2182fafd43a819b8/LICENSE-BOOST) is now checked by hash. The corrected guard also saves resolved lock/provenance metadata before reporting an unreviewed license. A successful retry is still required; no native assertions were weakened.
+
 ## Why this small tool
 
 [Hurl issue2666](https://github.com/Orange-OpenSource/hurl/issues/2666) asks for cURL export without first executing requests, including [paid or destructive endpoints](https://github.com/Orange-OpenSource/hurl/issues/2666#issuecomment-2050144854). Hurl already has `--curl FILE` for exporting requests **as they execute**. That native feature can reflect runtime values and remains the appropriate existing tool for that workflow. [curlconverter](https://github.com/curlconverter/curlconverter) translates cURL onward to other languages.

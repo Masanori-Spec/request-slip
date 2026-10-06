@@ -18,3 +18,10 @@ its own upstream terms; no libxml2 copy is bundled.
 Official Hurl and hurlfmt 8.0.1 release executables are used only by the disposable
 synthetic test harness. Their tarball digest is pinned in scripts/upstream-pin.json.
 They are excluded from source and verification artifacts.
+
+ryu 1.0.23, a serde_json dependency, declares Apache-2.0 OR BSL-1.0.
+BSL-1.0 here is Boost Software License 1.0. The exact upstream license reviewed is:
+https://github.com/dtolnay/ryu/blob/f0b52bb194befe6fd242154f2182fafd43a819b8/LICENSE-BOOST
+SHA-256: c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566
+CI checks those bytes in the registry package before compiling. No ryu source
+or binary is bundled, and this notice grants no license to original project code.

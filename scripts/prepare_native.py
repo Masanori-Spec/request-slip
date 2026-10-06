@@ -24,19 +24,29 @@ for item in PIN['source_files']:
     files.append({**item, 'sha256': hashlib.sha256(data).hexdigest()})
 lock = ROOT / 'Cargo.lock'
 tuples = {(p['name'], p['version']): p.get('checksum') for p in tomllib.loads(lock.read_text())['package']}
-allowed = {'MIT', 'Apache-2.0', 'MPL-2.0', 'BSD-2-Clause', 'BSD-3-Clause', 'ISC', 'Zlib', 'Unicode-3.0', 'Unlicense', '0BSD', 'MIT-0'}
+allowed = {'MIT', 'Apache-2.0', 'MPL-2.0', 'BSD-2-Clause', 'BSD-3-Clause', 'ISC', 'Zlib', 'Unicode-3.0', 'Unlicense', '0BSD', 'MIT-0', 'BSL-1.0'}
 deps = []
+unreviewed = []
 for p in metadata['packages']:
     if p['name'] == 'request-slip':
         continue
     assert p['source'].startswith('registry+'), 'Only registry dependencies are allowed'
     license_text = p.get('license') or ''
     atoms = set(re.findall(r'[A-Za-z0-9][A-Za-z0-9.-]*', license_text)) - {'OR', 'AND'}
-    assert atoms and atoms <= allowed, f'Unreviewed license: {p["name"]}: {license_text}'
+    if not atoms or not atoms <= allowed:
+        unreviewed.append({'name': p['name'], 'version': p['version'], 'license': license_text})
     deps.append({'name': p['name'], 'version': p['version'], 'license': license_text, 'checksum': tuples[(p['name'], p['version'])]})
 shutil.copyfile(lock, OUT / 'resolved-Cargo.lock')
-provenance = {'core': PIN['crate'], 'version': PIN['version'], 'commit': PIN['commit'], 'files': files, 'dependencies': deps, 'lock_sha256': hashlib.sha256(lock.read_bytes()).hexdigest(), 'libxml2_version': subprocess.check_output(['pkg-config', '--modversion', 'libxml-2.0'], text=True).strip(), 'distribution': 'Original CLI/test source plus metadata only; no dependency source or binary bundled'}
+provenance = {'core': PIN['crate'], 'version': PIN['version'], 'commit': PIN['commit'], 'files': files, 'dependencies': deps, 'unreviewed_licenses': unreviewed, 'lock_sha256': hashlib.sha256(lock.read_bytes()).hexdigest(), 'libxml2_version': subprocess.check_output(['pkg-config', '--modversion', 'libxml-2.0'], text=True).strip(), 'distribution': 'Original CLI/test source plus metadata only; no dependency source or binary bundled'}
 (OUT / 'native-provenance.json').write_text(json.dumps(provenance, indent=2) + '\n')
+assert not unreviewed, f'Unreviewed dependency licenses: {unreviewed}'
+# The initial gate stopped on this dual license. Check the exact reviewed text
+# in the downloaded registry package as well as its SPDX declaration.
+for package in metadata['packages']:
+    if package['name'] == 'ryu':
+        assert package['version'] == '1.0.23' and package['license'] == 'Apache-2.0 OR BSL-1.0'
+        license_bytes = (Path(package['manifest_path']).parent / 'LICENSE-BOOST').read_bytes()
+        assert hashlib.sha256(license_bytes).hexdigest() == 'c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566'
 asset = PIN['official_linux_asset']
 with urllib.request.urlopen(asset['url'], timeout=60) as response:
     data = response.read(asset['bytes'] + 1)
