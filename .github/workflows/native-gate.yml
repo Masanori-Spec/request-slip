@@ -1,0 +1,37 @@
+name: Verify RequestSlip with real Hurl and cURL
+on: [push, pull_request, workflow_dispatch]
+permissions:
+  contents: read
+defaults:
+  run:
+    shell: bash
+jobs:
+  native-wire-parity:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: rustup toolchain install 1.98.1 --profile minimal
+      - name: Install official distribution build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libxml2-dev pkg-config libclang-dev
+      - name: Verify official source, tools and dependency metadata
+        run: python scripts/prepare_native.py
+      - name: Compile and test the actual official-AST exporter
+        run: |
+          set -o pipefail
+          rustc +1.98.1 --version > evidence/rust-toolchain.txt
+          cargo +1.98.1 test --locked 2>&1 | tee evidence/rust-tests.txt
+          cargo +1.98.1 build --locked
+      - name: Consume actual exports with real Hurl and cURL on loopback
+        run: python scripts/native_gate.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: native-evidence
+          path: evidence/
+          if-no-files-found: error
