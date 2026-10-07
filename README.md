@@ -4,13 +4,7 @@ A small native CLI that turns a supported literal Hurl request file into reviewa
 
 This is a source-only Rust/Linux project. It requires a build toolchain and libxml2; it is **not a single-file browser app**. After it is built, converting files works offline. There is no execution command, HTTP client, URL import, server, account, automatic configuration discovery or persistent storage in the product.
 
-**Native wire parity is not established yet.** The official-AST exporter has compiled on Ubuntu22.04, all28 Rust tests pass, and real JSON/text exports were produced. The wire harness then stopped before requests because it used cURL's `--silent` option with Hurl. The invocation now uses Hurl's documented `--no-output`; a successful wire-gate retry is still required. Do not treat compilation or source review as a working-release claim.
-
-[The first CI run](https://github.com/Masanori-Spec/request-slip/actions/runs/37545545297) stopped before compilation at the license guard: ryu1.0.23 declares `Apache-2.0 OR BSL-1.0`, and Boost Software License1.0 was absent from the reviewed identifiers. Its [exact upstream license](https://github.com/dtolnay/ryu/blob/f0b52bb194befe6fd242154f2182fafd43a819b8/LICENSE-BOOST) is now checked by hash. The corrected guard also saves resolved lock/provenance metadata before reporting an unreviewed license. A successful retry is still required; no native assertions were weakened.
-
-[The second run](https://github.com/Masanori-Spec/request-slip/actions/runs/37546782829) verified all45 core source files,43 dependency license/checksum records and official executable hashes, compiled the product, then stopped at that incorrect URL test. Its exact resolved Cargo lock is now included. The product conversion logic and fixed wire oracle are unchanged by the test correction.
-
-[The third run](https://github.com/Masanori-Spec/request-slip/actions/runs/37547806289) passed all28 tests after distinguishing Hurl's bare `#` comment from its escaped `\#` URL character. It saved actual selected text/JSON exports and passed their framing/selection checks, then Hurl rejected the unsupported test-only `--silent` switch. The corrected `--no-output` option is defined in the pinned official CLI; production code, expected wire values and destination restrictions remain unchanged.
+[The native baseline passed](https://github.com/Masanori-Spec/request-slip/actions/runs/37548859824) on exact commit `e19e667caa692eabbee84758910cb2f819ac5cba`: all 28 Rust tests, eight original Hurl requests, seven selected cURL exports, one subset export and four corruption controls. The actual saved command text also preserved every argv byte in the controlled POSIX shell check. [Current runs](https://github.com/Masanori-Spec/request-slip/actions/workflows/native-gate.yml) repeat the gate and retain positive, subset and mutated request captures for review. These results cover the fixed synthetic corpus on Ubuntu 22.04, not arbitrary servers or all Hurl features.
 
 ## Why this small tool
 
@@ -26,10 +20,10 @@ The first supported build target is Ubuntu22.04 x86_64 with Rust1.98.1, a C link
 
 ```sh
 # With the documented toolchain and system dependencies already installed:
-cargo +1.98.1 build --locked --release
-./target/release/request-slip --help
-./target/release/request-slip requests.hurl --select 1,3 --format json > review.argv.json
-./target/release/request-slip requests.hurl --select 1,3 --format text > requests.curl.txt
+cargo +1.98.1 build --locked
+./target/debug/request-slip --help
+./target/debug/request-slip requests.hurl --select 1,3 --format json > review.argv.json
+./target/debug/request-slip requests.hurl --select 1,3 --format text > requests.curl.txt
 ```
 
 The CLI reads only the path you give it (or `-` for stdin) and writes to stdout. Shell redirection above creates files; the CLI itself does not overwrite inputs or save state. Review the receipt and command text before deciding whether to run anything yourself. Exported cURL commands can perform destructive or billable operations when manually run.
@@ -45,7 +39,7 @@ Selections are 1-based, unique and emitted in original source order. The JSON re
 - At most256KiB input,64 entries,32 selected entries,64 pairs per section,8KiB literal field,16KiB final URL,64KiB body and1MiB actual serialized output
 - Raw input also has a conservative128 opening-bracket budget and1–6-digit Unicode-escape-looking bound, including inside comments/raw text, before calling the recursive parser
 
-Auth, cookies, options, multipart, files, binary, JSON/XML/GraphQL bodies, placeholders, assertions/captures, unsupported methods and unknown AST forms block output. Response expectations must be bare status lines and are explicitly marked as omitted. No response is obtained, so response-derived cookies or other session effects cannot be reproduced. Each command is independent; the file is not promised to be an equivalent executed session.
+Recognized authentication forms (BasicAuth, Authorization and Proxy-Authorization), cookies, options, multipart, files, binary, structured JSON/XML/GraphQL bodies, placeholders, assertions/captures, unsupported methods and unknown AST forms block output. Custom literal headers and body text are not a secret scanner or redaction service. Response expectations must be bare status lines and are explicitly marked as omitted. No response is obtained, so response-derived cookies or other session effects cannot be reproduced. Each command is independent; the file is not promised to be an equivalent executed session.
 
 **Every literal `<` is rejected before parsing**, including in comments, headers or delimited bodies. This intentionally conservative non-XML restriction prevents the parser from entering its libxml SAX branch. BOM and unsupported control characters are also rejected. This is not a claim to support all static Hurl files.
 
@@ -53,15 +47,15 @@ Literal values come from the official AST. Raw bodies use the AST's original sou
 
 The exporter matches pinned Hurl8.0.1 query/form value escaping, empty-header syntax and implicit Content-Type handling. It emits `curl --disable` first, disables URL globbing, preserves accepted path text, suppresses implicit Expect, and uses the pinned Hurl user agent unless explicitly supplied. It does not promise identical TLS, protocol negotiation, proxy settings, environment behavior, network responses, or every implicit transport header. It adds no insecure TLS option or automatic redirect following. Only POSIX shell quoting is supplied; PowerShell/cmd.exe are unsupported.
 
-## Native verification design
+## Native verification
 
 `scripts/native_gate.py` accepts **no input path or endpoint arguments**. Only the committed fixture with a fixed SHA-256 may reach request execution. Its `.invalid` host is replaced with a newly allocated `127.0.0.1` capture listener. HOME/CURL_HOME are temporary, proxy variables are not inherited, and generated cURL argv is checked against a strict option/destination allowlist before subprocess execution. No shell executes an HTTP command. A separate controlled synthetic shell check uses only `set`/`printf` to capture quoted argv.
 
 The fixture has eight original Hurl requests and seven selected exports: existing and repeated query values, plus/space/Japanese encoding, duplicate/empty headers, literal apostrophes/`$()`/backticks, repeated form values containing`=&@`, raw body beginning`@`, plain multiline, decoded oneline, empty body and a trailing-question-mark URL. One final request is physically omitted from exports. A second selection exports only entry2.
 
-The actual CLI's JSON/text stdout is saved to files and re-read. The official Hurl executable runs the original fixed fixture; system cURL runs only the checked product argv. Captured method, raw request target, selected duplicate/empty/default header pairs and exact UTF-8 body bytes must match independently authored literal expectations **and** each other. Four actual-request mutations change method, query ordering, one duplicate header and one body byte; each must fail the fixed oracle.
+The actual CLI's JSON/text stdout is saved to files and re-read. The official Hurl executable runs the original fixed fixture; system cURL runs only the checked product argv. Captured method, raw request target, selected duplicate/empty/default header pairs and exact UTF-8 body bytes must match independently authored literal expectations **and** each other. Four actual-request mutations change method, query ordering, one duplicate header and one body byte. Each captured mutation must first equal its precise intended one-field fault and then fail the positive fixed oracle. The report retains these captures and the subset capture, in addition to the original and selected positive records.
 
-Official Hurl/hurlfmt8.0.1 asset SHA-256 is `cac7c4670d69444db120edb21fe06c97ba8c80dcc52279957c8dd18f05fb0c06`. The core release commit is `a39c7c43457ba2aa8edad833f33f9afe28444838`; all44 core Rust files and one CSS resource are checked against official Git blob IDs. CI records the resolved Cargo lock, dependency license/checksum records, compiler, system libxml2 and cURL versions. The included lock is the actual43-dependency graph from the compiled second run; CI and the documented build use it with `--locked`.
+Official Hurl/hurlfmt8.0.1 asset SHA-256 is `cac7c4670d69444db120edb21fe06c97ba8c80dcc52279957c8dd18f05fb0c06`. The core release commit is `a39c7c43457ba2aa8edad833f33f9afe28444838`; all44 core Rust files and one CSS resource are checked against official Git blob IDs. CI records the resolved Cargo lock, dependency license/checksum records, compiler, system libxml2 and cURL versions. The included lock is the actual 43-dependency graph used by the successful native baseline. The tested toolchain is Rust 1.98.1, system libxml2 2.9.13 and cURL 7.81.0 on Ubuntu 22.04. CI and the documented debug build use the lock with `--locked`.
 
 The product imports only `hurl_core::parser`/AST/types, never core file-input helpers or Hurl runner/client APIs. Read-only source inspection found file I/O in the separate core input module and native XML parsing in the excluded branch. The CLI reads only its explicit file/stdin. Unsupported/invalid input produces an error without source excerpts or partial stdout.
 
@@ -71,4 +65,4 @@ CI uploads verification metadata and synthetic exported text/JSON only. It exclu
 
 Hurlファイルの対応範囲に含まれるリクエストを選び、実行せずにcURLコマンドのテキストと確認用JSONへ変換する小さなCLIです。ブラウザーアプリではなく、Rustとlibxml2を使ったビルドが必要です。ビルド後の変換はオフラインで行えます。
 
-認証・Cookie・変数・外部ファイル・JSON/XML本文などは対応外として出力を止めます。Hurlの既存`--curl`は実際に送ったリクエストの出力機能で、本ツールはその置き換えではありません。出力を自分で実行すると通信や課金・更新処理が発生する可能性があるため、内容を確認してください。現在はコンパイルと28件のテストが通り、実際の出力も生成できています。検証スクリプトのHurl起動引数を修正した段階で、実通信の内容比較は未完了です。
+認証・Cookie・変数・外部ファイル・JSON/XML本文などは対応外として出力を止めます。Hurlの既存`--curl`は実際に送ったリクエストの出力機能で、本ツールはその置き換えではありません。出力を自分で実行すると通信や課金・更新処理が発生する可能性があるため、内容を確認してください。合成データを使った28件のRustテストと、Hurl/cURLが送る内容の比較を通過しています。確認した範囲は固定のテストデータとUbuntu 22.04で、任意のサーバーやHurlの全機能に対する保証ではありません。

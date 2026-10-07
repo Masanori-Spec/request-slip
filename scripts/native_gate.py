@@ -156,21 +156,33 @@ with tempfile.TemporaryDirectory(prefix='request-slip-gate-') as temp:
         subset=cli('--select','2','--format','json').stdout
         (EVIDENCE/'subset.argv.json').write_bytes(subset)
         subset=json.loads(subset);assert len(subset['requests'])==1 and subset['requests'][0]['entry']==2
-        compare(curl(subset['requests'][0]['argv']),EXPECTED[1])
+        subset_capture=curl(subset['requests'][0]['argv'])
+        compare(subset_capture,EXPECTED[1])
 
         mutations=[]
+        mutation_captures=[]
         for name,entry in [('method',0),('query-order',0),('duplicate-header',0),('body-byte',2)]:
             argv=copy.deepcopy(receipt['requests'][entry]['argv'])
-            if name=='method': argv[argv.index('--request')+1]='PATCH'
+            intended=copy.deepcopy(EXPECTED[entry])
+            if name=='method':
+                argv[argv.index('--request')+1]='PATCH'
+                intended['method']='PATCH'
             if name=='query-order':
                 p=argv.index('--url')+1;argv[p]=argv[p].replace('tag=red%20blue&tag=a%2Bb','tag=a%2Bb&tag=red%20blue')
+                intended['target']=intended['target'].replace('tag=red%20blue&tag=a%2Bb','tag=a%2Bb&tag=red%20blue')
             if name=='duplicate-header':
                 p=argv.index('X-Dup: second');del argv[p-1:p+1]
-            if name=='body-byte': argv[argv.index('--data-raw')+1]+='!'
+                intended['headers'].remove(['x-dup','second'])
+            if name=='body-byte':
+                argv[argv.index('--data-raw')+1]+='!'
+                intended['body']+='!'
+            assert intended!=EXPECTED[entry]
             actual=curl(argv)
+            compare(actual,intended)
             try: compare(actual,EXPECTED[entry])
             except AssertionError: mutations.append(name)
             else: raise AssertionError('The fixed oracle accepted a corrupted request')
+            mutation_captures.append({'control':name,'entry':entry+1,'intended_fault':intended,'actual_capture':actual,'positive_oracle_rejected':True})
 
         # hurlfmt-only JSON really omits BasicAuth; the official-AST product rejects it.
         auth=b'GET http://fixture.invalid/\n[BasicAuth]\nsynthetic-user: synthetic-password\n'
@@ -180,7 +192,7 @@ with tempfile.TemporaryDirectory(prefix='request-slip-gate-') as temp:
         assert b'BasicAuth' in cli(input_bytes=auth,ok=False).stderr
         for bad in [b'GET http://fixture.invalid/\nX-A: \xff\n',b'GET http://fixture.invalid/\n\0',b'x'*262145]: cli(input_bytes=bad,ok=False)
         cli('--format','json','--format','json',ok=False)
-        report={'status':'native-wire-parity-passed','source_fixture_sha256':FIXTURE_SHA,'original_hurl_requests':8,'selected_curl_requests':len(converted),'single_subset_requests':1,'negative_controls':mutations,'fixed_expected':EXPECTED,'original_hurl_capture':original,'actual_export_curl_capture':converted,'shell_argv_fidelity':True,'hurlfmt_basic_auth_omission_confirmed':True,'user_inputs_executed':0,'destinations':'Only disposable 127.0.0.1 listener; port is allocated by the OS','curl_version':subprocess.check_output(['/usr/bin/curl','--version'],text=True).splitlines()[0]}
+        report={'status':'native-wire-parity-passed','source_fixture_sha256':FIXTURE_SHA,'original_hurl_requests':8,'selected_curl_requests':len(converted),'single_subset_requests':1,'subset_capture':subset_capture,'negative_controls':mutations,'negative_control_captures':mutation_captures,'fixed_expected':EXPECTED,'original_hurl_capture':original,'actual_export_curl_capture':converted,'shell_argv_fidelity':True,'hurlfmt_basic_auth_omission_confirmed':True,'user_inputs_executed':0,'destinations':'Only disposable 127.0.0.1 listener; port is allocated by the OS','curl_version':subprocess.check_output(['/usr/bin/curl','--version'],text=True).splitlines()[0]}
         (EVIDENCE/'native-result.json').write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n')
         print('Native wire parity: 8 original Hurl requests, 7 selected cURL exports, 1 subset, 4 corruption controls, POSIX argv fidelity, BasicAuth omission confirmed')
     finally:

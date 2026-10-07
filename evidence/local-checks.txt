@@ -1,8 +1,7 @@
 Python source syntax: passed (2 scripts)
 Fixed synthetic fixture SHA256: 41c9643200c3567f40507ad2531cd8c90a0058d33a69aca3c0dd338e38fb9bad
 Official source pins: 44 Rust files plus1 CSS file
-Actual CI37547806289: compiled, all28 Rust tests passed, selected exports produced
-Wire gate stopped before requests: unsupported test-only Hurl --silent flag
-Current harness uses documented --no-output; production/fixture/oracle unchanged
+Actual baseline CI37548859824: all28 Rust tests passed; 8 Hurl/7 selected curl/1 subset/4 controls passed
+Actual saved POSIX command text: canonical quoting and real shell argv fidelity passed
 Resolved Cargo.lock: 3e54ff0afbe443df093ac76cbfe10f3e20a9d3776688fd2c7a1b2a7be6565779
-Current native wire parity: PENDING reviewed hosted retry
+Current gate adds retained subset/mutation captures with precise fault assertions; exact-head CI pending
